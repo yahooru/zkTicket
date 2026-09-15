@@ -1,0 +1,79 @@
+- generic [ref=f1e3]:
+  - link "Skip to main content" [ref=f1e4] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=f1e5]:
+    - generic [ref=f1e6]: zkTicket
+    - generic [ref=f1e11]: preprod
+  - generic [aria-hidden]:
+    - navigation:
+      - button: Events
+      - button: My tickets
+      - button: Organizer
+      - button: Verifier
+  - main [ref=f1e13]:
+    - generic [ref=f1e14]:
+      - generic [ref=f1e15]:
+        - generic [ref=f1e16]: Private access on Midnight
+        - heading [level=1] [ref=f1e20]:
+          - text: Prove you belong.
+          - emphasis [ref=f1e21]: Keep who you are.
+        - paragraph [ref=f1e23]: "Programmable event tickets that reveal one fact at the door: access approved. Your identity and date of birth stay yours."
+        - generic [ref=f1e25]:
+          - generic [ref=f1e26]: Zero-knowledgeeligibility proofs
+          - generic [ref=f1e30]: Private ownershipunlinkable to wallet
+      - generic [ref=f1e34]:
+        - generic [ref=f1e37]:
+          - generic [ref=f1e42]:
+            - generic [ref=f1e43]: Midnight wallet
+            - generic [ref=f1e44]: Connector 4.x · preprod
+          - generic [ref=f1e45]: Protocol address
+          - textbox "Protocol address" [ref=f1e47]:
+            - /placeholder: Paste a deployed contract address
+            - text: c388c841b402dd18db340caf9d5f224b0521ff29b89dc241f2b092b1b099e609
+          - button "Enter protocol" [ref=f1e48] [cursor=pointer]
+          - generic [ref=f1e53]: or
+          - button [ref=f1e55] [cursor=pointer]
+          - paragraph [ref=f1e59]: Your wallet handles balancing, proving and submission. Secrets never leave this browser.
+        - generic [ref=f1e62]: Connected transactions settle on Midnight preprod
+    - generic [ref=f1e64]:
+      - generic [ref=f1e65]:
+        - generic [ref=f1e66]: The privacy boundary
+        - heading "The venue learns what it needs. Nothing it doesn’t." [level=2] [ref=f1e68]: The venue learns what it needs.Nothing it doesn’t.
+      - generic [ref=f1e69]:
+        - article [ref=f1e73]:
+          - text: 01 / ENTRY
+          - heading "A proof, not a profile" [level=3] [ref=f1e76]
+          - paragraph [ref=f1e77]: Each 60-second QR carries a one-time entry secret. The contract validates its commitment and burns its reuse path on redemption.
+        - article [ref=f1e91]:
+          - text: 02 / AGE
+          - heading "Over 18. Date hidden." [level=3] [ref=f1e94]
+          - paragraph [ref=f1e95]: A private birth date satisfies the event cutoff inside the proof.
+        - article [ref=f1e99]:
+          - text: 03 / REPLAY
+          - heading "One ticket. One entry." [level=3] [ref=f1e102]: One ticket.One entry.
+          - paragraph [ref=f1e103]: Redemption is atomic and on-chain.
+    - generic [ref=f1e104]:
+      - generic [ref=f1e105]:
+        - generic [ref=f1e106]: One quiet flow
+        - heading "From on-chain issue to private admission." [level=2] [ref=f1e108]: From on-chain issueto private admission.
+      - generic [ref=f1e109]:
+        - generic [ref=f1e111]:
+          - generic [ref=f1e112]: "01"
+          - heading "Discover" [level=3] [ref=f1e113]
+          - paragraph [ref=f1e114]: Read event state directly from Midnight.
+        - generic [ref=f1e116]:
+          - generic [ref=f1e117]: "02"
+          - heading "Purchase" [level=3] [ref=f1e118]
+          - paragraph [ref=f1e119]: Pay NIGHT and receive an owner commitment.
+        - generic [ref=f1e121]:
+          - generic [ref=f1e122]: "03"
+          - heading "Prove" [level=3] [ref=f1e123]
+          - paragraph [ref=f1e124]: Generate eligibility locally through your wallet.
+        - generic [ref=f1e126]:
+          - generic [ref=f1e127]: "04"
+          - heading "Enter" [level=3] [ref=f1e128]
+          - paragraph [ref=f1e129]: Scan, verify and redeem exactly once.
+  - contentinfo [ref=f1e130]:
+    - generic [ref=f1e131]: zkTicket
+    - paragraph [ref=f1e136]: The venue learns that you’re allowed inside — not who you are.
+    - generic [ref=f1e137]: Compact 0.23 · Midnight preprod

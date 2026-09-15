@@ -1,0 +1,65 @@
+{
+  "name": "zkticket",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "contract",
+    "api",
+    "ui"
+  ],
+  "scripts": {
+    "compile": "node scripts/compile-contract.mjs",
+    "prepare:zk": "node scripts/copy-zk-artifacts.mjs",
+    "build:contract": "npm run build --workspace=zkticket-contract",
+    "build:api": "npm run build --workspace=@zkticket/api",
+    "build:ui": "npm run prepare:zk && npm run build --workspace=zkticket-ui",
+    "build": "npm run build:contract && npm run build:api && npm run build:ui",
+    "dev": "npm run prepare:zk && npm run dev --workspace=zkticket-ui",
+    "test": "npm run test --workspace=zkticket-contract && npm run test --workspace=zkticket-ui",
+    "typecheck": "npm run typecheck --workspace=@zkticket/api && npm run typecheck --workspace=zkticket-ui"
+  },
+  "dependencies": {
+    "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
+    "@midnight-ntwrk/compact-js": "2.5.1",
+    "@midnight-ntwrk/dapp-connector-api": "4.0.1",
+    "@midnight-ntwrk/midnight-js-contracts": "4.1.1",
+    "@midnight-ntwrk/midnight-js-fetch-zk-config-provider": "4.1.1",
+    "@midnight-ntwrk/midnight-js-http-client-proof-provider": "4.1.1",
+    "@midnight-ntwrk/midnight-js-indexer-public-data-provider": "4.1.1",
+    "@midnight-ntwrk/midnight-js-network-id": "4.1.1",
+    "@midnight-ntwrk/midnight-js-protocol": "4.1.1",
+    "@midnight-ntwrk/midnight-js-types": "4.1.1",
+    "@midnight-ntwrk/midnight-js-utils": "4.1.1",
+    "@midnight-ntwrk/onchain-runtime-v3": "3.0.0",
+    "@midnight-ntwrk/wallet-sdk-address-format": "3.1.2",
+    "@phosphor-icons/react": "^2.1.10",
+    "@zxing/browser": "^0.1.5",
+    "buffer": "^6.0.3",
+    "fp-ts": "^2.16.11",
+    "pino": "^10.3.1",
+    "qrcode": "^1.5.4",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "rxjs": "^7.8.2",
+    "semver": "^7.7.4"
+  },
+  "devDependencies": {
+    "@types/qrcode": "^1.5.5",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "@types/semver": "^7.7.1",
+    "@vitejs/plugin-react": "^5.0.2",
+    "rimraf": "^6.0.1",
+    "rollup": "4.63.2",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.5",
+    "vite-plugin-wasm": "^3.5.0",
+    "vitest": "^4.1.11"
+  },
+  "overrides": {
+    "@midnight-ntwrk/ledger-v8": "8.1.0",
+    "@midnight-ntwrk/onchain-runtime-v3": "3.0.0",
+    "smoldot": "npm:@aspect-build/empty@0.0.0"
+  }
+}

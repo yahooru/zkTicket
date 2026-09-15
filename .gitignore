@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.vite/
+coverage/
+*.log
+.env
+.env.local
+ui/public/keys/
+ui/public/zkir/
+.midnight-state.json
+
+
+.vercel

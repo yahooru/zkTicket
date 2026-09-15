@@ -1,0 +1,271 @@
+/**
+ * zkTicket — private event access on Midnight.
+ *
+ * Public: event operations, aggregate supply, anonymous commitments, redemption.
+ * Private: organizer/user secrets and the holder's birth date.
+ */
+
+pragma language_version 0.23;
+
+import CompactStandardLibrary;
+
+export enum EventStatus {
+  ACTIVE,
+  PAUSED,
+  CLOSED
+}
+
+export enum TicketTier {
+  GENERAL,
+  PREMIUM
+}
+
+export struct EventRecord {
+  name: Bytes<32>,
+  venue: Bytes<32>,
+  dateLabel: Bytes<32>,
+  artworkUrl: Bytes<128>,
+  startsAt: Uint<64>,
+  minAge: Uint<8>,
+  ageCutoff: Uint<32>,
+  capacity: Uint<64>,
+  generalPrice: Uint<64>,
+  premiumPrice: Uint<64>,
+  maxTransfers: Uint<8>,
+  issued: Uint<64>,
+  redeemed: Uint<64>,
+  revenue: Uint<128>,
+  proceedsClaimed: Uint<128>,
+  organizerHash: Bytes<32>,
+  status: EventStatus
+}
+
+export struct TicketRecord {
+  eventId: Uint<64>,
+  tier: TicketTier,
+  ownerHash: Bytes<32>,
+  entryCommitment: Bytes<32>,
+  used: Boolean,
+  transfers: Uint<8>
+}
+
+struct EventOwnerPreimage {
+  domain: Bytes<32>,
+  secret: Bytes<32>,
+  eventId: Uint<64>
+}
+
+struct EntryPreimage {
+  domain: Bytes<32>,
+  secret: Bytes<32>,
+  ticketId: Uint<64>
+}
+
+export ledger events: Map<Uint<64>, EventRecord>;
+export ledger tickets: Map<Uint<64>, TicketRecord>;
+export ledger nextEventId: Counter;
+export ledger nextTicketId: Counter;
+
+witness localSecretKey(): Bytes<32>;
+witness localBirthDate(): Uint<32>;
+witness localEntrySecret(): Bytes<32>;
+
+export circuit organizerCommitment(sk: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([
+    pad(32, "zkticket:organizer:v1"),
+    sk
+  ]);
+}
+
+export circuit ownerCommitment(sk: Bytes<32>, eventId: Uint<64>): Bytes<32> {
+  return persistentHash<EventOwnerPreimage>(EventOwnerPreimage {
+    domain: pad(32, "zkticket:owner:v1"),
+    secret: sk,
+    eventId: eventId
+  });
+}
+
+export circuit entryCommitment(entrySecret: Bytes<32>, ticketId: Uint<64>): Bytes<32> {
+  return persistentHash<EntryPreimage>(EntryPreimage {
+    domain: pad(32, "zkticket:entry:v1"),
+    secret: entrySecret,
+    ticketId: ticketId
+  });
+}
+
+export circuit priceForTier(event: EventRecord, tier: TicketTier): Uint<64> {
+  if (tier == TicketTier.PREMIUM) {
+    return event.premiumPrice;
+  }
+  return event.generalPrice;
+}
+
+export circuit createEvent(
+  name: Bytes<32>,
+  venue: Bytes<32>,
+  dateLabel: Bytes<32>,
+  artworkUrl: Bytes<128>,
+  startsAt: Uint<64>,
+  minAge: Uint<8>,
+  ageCutoff: Uint<32>,
+  capacity: Uint<64>,
+  generalPrice: Uint<64>,
+  premiumPrice: Uint<64>,
+  maxTransfers: Uint<8>
+): [] {
+  assert(capacity > 0, "capacity must be greater than zero");
+  assert(maxTransfers <= 8, "transfer limit is too high");
+  assert((minAge == 0 && ageCutoff == 0) || (minAge > 0 && ageCutoff > 0), "invalid age policy");
+
+  nextEventId.increment(1);
+  const eventId = disclose(nextEventId.read() as Uint<64>);
+  const organizerHash = organizerCommitment(localSecretKey());
+
+  events.insert(eventId, EventRecord {
+    name: disclose(name),
+    venue: disclose(venue),
+    dateLabel: disclose(dateLabel),
+    artworkUrl: disclose(artworkUrl),
+    startsAt: disclose(startsAt),
+    minAge: disclose(minAge),
+    ageCutoff: disclose(ageCutoff),
+    capacity: disclose(capacity),
+    generalPrice: disclose(generalPrice),
+    premiumPrice: disclose(premiumPrice),
+    maxTransfers: disclose(maxTransfers),
+    issued: 0,
+    redeemed: 0,
+    revenue: 0,
+    proceedsClaimed: 0,
+    organizerHash: disclose(organizerHash),
+    status: EventStatus.ACTIVE
+  });
+}
+
+export circuit setEventStatus(eventId: Uint<64>, status: EventStatus): [] {
+  const publicEventId = disclose(eventId);
+  assert(events.member(publicEventId), "event not found");
+  const event = events.lookup(publicEventId);
+  assert(organizerCommitment(localSecretKey()) == event.organizerHash, "organizer authorization failed");
+  events.insert(publicEventId, EventRecord { ...event, status: disclose(status) });
+}
+
+export circuit buyTicket(eventId: Uint<64>, tier: TicketTier): [] {
+  const publicEventId = disclose(eventId);
+  const publicTier = disclose(tier);
+  assert(events.member(publicEventId), "event not found");
+  const event = events.lookup(publicEventId);
+  assert(event.status == EventStatus.ACTIVE, "event is not accepting tickets");
+  assert(event.issued < event.capacity, "event is sold out");
+
+  const ticketPrice = priceForTier(event, publicTier);
+  receiveUnshielded(nativeToken(), ticketPrice as Uint<128>);
+
+  nextTicketId.increment(1);
+  const ticketId = disclose(nextTicketId.read() as Uint<64>);
+  const holder = ownerCommitment(localSecretKey(), eventId);
+
+  tickets.insert(ticketId, TicketRecord {
+    eventId: publicEventId,
+    tier: publicTier,
+    ownerHash: disclose(holder),
+    entryCommitment: default<Bytes<32>>,
+    used: false,
+    transfers: 0
+  });
+  events.insert(publicEventId, EventRecord {
+    ...event,
+    issued: (event.issued + 1) as Uint<64>,
+    revenue: (event.revenue + ticketPrice) as Uint<128>
+  });
+}
+
+export circuit proveEligibility(ticketId: Uint<64>): [] {
+  const publicTicketId = disclose(ticketId);
+  assert(tickets.member(publicTicketId), "ticket not found");
+  const ticket = tickets.lookup(publicTicketId);
+  assert(events.member(ticket.eventId), "event not found");
+  const event = events.lookup(ticket.eventId);
+  assert(!ticket.used, "ticket already redeemed");
+  assert(ownerCommitment(localSecretKey(), ticket.eventId) == ticket.ownerHash, "ticket ownership proof failed");
+
+  const birthDate = localBirthDate();
+  if (event.ageCutoff > 0) {
+    assert(birthDate > 0, "birth date is required");
+    assert(birthDate <= event.ageCutoff, "age requirement not met");
+  }
+}
+
+export circuit prepareEntry(ticketId: Uint<64>): [] {
+  const publicTicketId = disclose(ticketId);
+  assert(tickets.member(publicTicketId), "ticket not found");
+  const ticket = tickets.lookup(publicTicketId);
+  assert(events.member(ticket.eventId), "event not found");
+  const event = events.lookup(ticket.eventId);
+  assert(event.status != EventStatus.CLOSED, "event entry is closed");
+  assert(!ticket.used, "ticket already redeemed");
+  assert(ownerCommitment(localSecretKey(), ticket.eventId) == ticket.ownerHash, "ticket ownership proof failed");
+
+  const birthDate = localBirthDate();
+  if (event.ageCutoff > 0) {
+    assert(birthDate > 0, "birth date is required");
+    assert(birthDate <= event.ageCutoff, "age requirement not met");
+  }
+
+  const commitment = entryCommitment(localEntrySecret(), ticketId);
+  tickets.insert(publicTicketId, TicketRecord { ...ticket, entryCommitment: disclose(commitment) });
+}
+
+export circuit redeemTicket(ticketId: Uint<64>, presentedSecret: Bytes<32>): [] {
+  const publicTicketId = disclose(ticketId);
+  assert(tickets.member(publicTicketId), "ticket not found");
+  const ticket = tickets.lookup(publicTicketId);
+  assert(events.member(ticket.eventId), "event not found");
+  const event = events.lookup(ticket.eventId);
+  assert(event.status != EventStatus.CLOSED, "event entry is closed");
+  assert(!ticket.used, "ticket already redeemed");
+  assert(
+    entryCommitment(presentedSecret, ticketId) == ticket.entryCommitment,
+    "entry proof is invalid"
+  );
+
+  tickets.insert(publicTicketId, TicketRecord { ...ticket, used: true, entryCommitment: default<Bytes<32>> });
+  events.insert(ticket.eventId, EventRecord { ...event, redeemed: (event.redeemed + 1) as Uint<64> });
+}
+
+export circuit transferTicket(ticketId: Uint<64>, newOwnerHash: Bytes<32>): [] {
+  const publicTicketId = disclose(ticketId);
+  assert(tickets.member(publicTicketId), "ticket not found");
+  const ticket = tickets.lookup(publicTicketId);
+  assert(events.member(ticket.eventId), "event not found");
+  const event = events.lookup(ticket.eventId);
+  assert(!ticket.used, "redeemed tickets cannot be transferred");
+  assert(ticket.transfers < event.maxTransfers, "transfer limit reached");
+  assert(ownerCommitment(localSecretKey(), ticket.eventId) == ticket.ownerHash, "ticket ownership proof failed");
+  assert(disclose(newOwnerHash) != ticket.ownerHash, "new owner must be different");
+
+  tickets.insert(publicTicketId, TicketRecord {
+    ...ticket,
+    ownerHash: disclose(newOwnerHash),
+    entryCommitment: default<Bytes<32>>,
+    transfers: (ticket.transfers + 1) as Uint<8>
+  });
+}
+
+export circuit claimEventProceeds(eventId: Uint<64>, recipient: UserAddress): [] {
+  const publicEventId = disclose(eventId);
+  assert(events.member(publicEventId), "event not found");
+  const event = events.lookup(publicEventId);
+  assert(organizerCommitment(localSecretKey()) == event.organizerHash, "organizer authorization failed");
+
+  assert(event.revenue > event.proceedsClaimed, "no proceeds to claim");
+  const claimable = event.revenue - event.proceedsClaimed;
+  assert(unshieldedBalanceGte(nativeToken(), claimable), "contract balance is insufficient");
+
+  sendUnshielded(
+    nativeToken(),
+    claimable,
+    right<ContractAddress, UserAddress>(disclose(recipient))
+  );
+  events.insert(publicEventId, EventRecord { ...event, proceedsClaimed: event.revenue });
+}

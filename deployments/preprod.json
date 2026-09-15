@@ -1,0 +1,36 @@
+{
+  "network": "preprod",
+  "contractAddress": "79f31f558aa03e97cf66cab6b4f595e3f31597da7d0dca6faf15c88cf7f6cdee",
+  "webApp": "https://zkticket.vercel.app",
+  "webVerifiedAt": "2026-09-13T14:43:41+05:30",
+  "deployedAt": "2026-09-13T16:21:12+05:30",
+  "connector": "1AM",
+  "dappConnectorApi": "4.0.1",
+  "verifiedAt": "2026-09-13T10:18:53+05:30",
+  "verification": {
+    "eventCreated": false,
+    "artworkPersisted": false,
+    "ticketPurchased": false,
+    "eligibilityProved": false,
+    "entryPrepared": false,
+    "ticketRedeemed": false,
+    "replayRejected": false,
+    "pauseAndReopen": false,
+    "proceedsClaimed": false,
+    "eventStatus": "empty",
+    "vercelDeployment": true,
+    "walletChooser": ["1AM", "Lace"],
+    "hostedWalletConnected": true,
+    "hostedContractStateLoaded": true,
+    "securityHeaders": true,
+    "zkArtifactsServed": true,
+    "responsiveLayout": true,
+    "lighthouse": {
+      "performance": 99,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "agenticBrowsing": 100
+    }
+  }
+}

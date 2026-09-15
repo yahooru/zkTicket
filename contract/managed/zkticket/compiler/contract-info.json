@@ -1,0 +1,751 @@
+{
+  "compiler-version": "0.31.1",
+  "language-version": "0.23.0",
+  "runtime-version": "0.16.0",
+  "circuits": [
+    {
+      "name": "organizerCommitment",
+      "pure": true,
+      "proof": false,
+      "arguments": [
+        {
+          "name": "sk",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Bytes",
+        "length": 32
+      }
+    },
+    {
+      "name": "ownerCommitment",
+      "pure": true,
+      "proof": false,
+      "arguments": [
+        {
+          "name": "sk",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        },
+        {
+          "name": "eventId",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 18446744073709551615
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Bytes",
+        "length": 32
+      }
+    },
+    {
+      "name": "entryCommitment",
+      "pure": true,
+      "proof": false,
+      "arguments": [
+        {
+          "name": "entrySecret",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        },
+        {
+          "name": "ticketId",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 18446744073709551615
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Bytes",
+        "length": 32
+      }
+    },
+    {
+      "name": "priceForTier",
+      "pure": true,
+      "proof": false,
+      "arguments": [
+        {
+          "name": "event",
+          "type": {
+            "type-name": "Struct",
+            "name": "EventRecord",
+            "elements": [
+              {
+                "name": "name",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "venue",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "dateLabel",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "artworkUrl",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 128
+                }
+              },
+              {
+                "name": "startsAt",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 18446744073709551615
+                }
+              },
+              {
+                "name": "minAge",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 255
+                }
+              },
+              {
+                "name": "ageCutoff",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 4294967295
+                }
+              },
+              {
+                "name": "capacity",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 18446744073709551615
+                }
+              },
+              {
+                "name": "generalPrice",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 18446744073709551615
+                }
+              },
+              {
+                "name": "premiumPrice",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 18446744073709551615
+                }
+              },
+              {
+                "name": "maxTransfers",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 255
+                }
+              },
+              {
+                "name": "issued",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 18446744073709551615
+                }
+              },
+              {
+                "name": "redeemed",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 18446744073709551615
+                }
+              },
+              {
+                "name": "revenue",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 340282366920938463463374607431768211455
+                }
+              },
+              {
+                "name": "proceedsClaimed",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 340282366920938463463374607431768211455
+                }
+              },
+              {
+                "name": "organizerHash",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "status",
+                "type": {
+                  "type-name": "Enum",
+                  "name": "EventStatus",
+                  "elements": [
+                    "ACTIVE",
+                    "PAUSED",
+                    "CLOSED"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "tier",
+          "type": {
+            "type-name": "Enum",
+            "name": "TicketTier",
+            "elements": [
+              "GENERAL",
+              "PREMIUM"
+            ]
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Uint",
+        "maxval": 18446744073709551615
+      }
+    },
+    {
+      "name": "createEvent",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+        {
+          "name": "name",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        },
+        {
+          "name": "venue",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        },
+        {
+          "name": "dateLabel",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        },
+        {
+          "name": "artworkUrl",
+          "type": {
+            "type-name": "Bytes",
+            "length": 128
+          }
+        },
+        {
+          "name": "startsAt",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 18446744073709551615
+          }
+        },
+        {
+          "name": "minAge",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 255
+          }
+        },
+        {
+          "name": "ageCutoff",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 4294967295
+          }
+        },
+        {
+          "name": "capacity",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 18446744073709551615
+          }
+        },
+        {
+          "name": "generalPrice",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 18446744073709551615
+          }
+        },
+        {
+          "name": "premiumPrice",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 18446744073709551615
+          }
+        },
+        {
+          "name": "maxTransfers",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 255
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "setEventStatus",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+        {
+          "name": "eventId",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 18446744073709551615
+          }
+        },
+        {
+          "name": "status",
+          "type": {
+            "type-name": "Enum",
+            "name": "EventStatus",
+            "elements": [
+              "ACTIVE",
+              "PAUSED",
+              "CLOSED"
+            ]
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "buyTicket",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+        {
+          "name": "eventId",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 18446744073709551615
+          }
+        },
+        {
+          "name": "tier",
+          "type": {
+            "type-name": "Enum",
+            "name": "TicketTier",
+            "elements": [
+              "GENERAL",
+              "PREMIUM"
+            ]
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "proveEligibility",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+        {
+          "name": "ticketId",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 18446744073709551615
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "prepareEntry",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+        {
+          "name": "ticketId",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 18446744073709551615
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "redeemTicket",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+        {
+          "name": "ticketId",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 18446744073709551615
+          }
+        },
+        {
+          "name": "presentedSecret",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "transferTicket",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+        {
+          "name": "ticketId",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 18446744073709551615
+          }
+        },
+        {
+          "name": "newOwnerHash",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "claimEventProceeds",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+        {
+          "name": "eventId",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 18446744073709551615
+          }
+        },
+        {
+          "name": "recipient",
+          "type": {
+            "type-name": "Struct",
+            "name": "UserAddress",
+            "elements": [
+              {
+                "name": "bytes",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    }
+  ],
+  "witnesses": [
+    {
+      "name": "localSecretKey",
+      "arguments": [
+      ],
+      "result type": {
+        "type-name": "Bytes",
+        "length": 32
+      }
+    },
+    {
+      "name": "localBirthDate",
+      "arguments": [
+      ],
+      "result type": {
+        "type-name": "Uint",
+        "maxval": 4294967295
+      }
+    },
+    {
+      "name": "localEntrySecret",
+      "arguments": [
+      ],
+      "result type": {
+        "type-name": "Bytes",
+        "length": 32
+      }
+    }
+  ],
+  "contracts": [
+  ],
+  "ledger": [
+    {
+      "name": "events",
+      "index": 0,
+      "exported": true,
+      "storage": "Map",
+      "key": {
+        "type-name": "Uint",
+        "maxval": 18446744073709551615
+      },
+      "value": {
+        "type-name": "Struct",
+        "name": "EventRecord",
+        "elements": [
+          {
+            "name": "name",
+            "type": {
+              "type-name": "Bytes",
+              "length": 32
+            }
+          },
+          {
+            "name": "venue",
+            "type": {
+              "type-name": "Bytes",
+              "length": 32
+            }
+          },
+          {
+            "name": "dateLabel",
+            "type": {
+              "type-name": "Bytes",
+              "length": 32
+            }
+          },
+          {
+            "name": "artworkUrl",
+            "type": {
+              "type-name": "Bytes",
+              "length": 128
+            }
+          },
+          {
+            "name": "startsAt",
+            "type": {
+              "type-name": "Uint",
+              "maxval": 18446744073709551615
+            }
+          },
+          {
+            "name": "minAge",
+            "type": {
+              "type-name": "Uint",
+              "maxval": 255
+            }
+          },
+          {
+            "name": "ageCutoff",
+            "type": {
+              "type-name": "Uint",
+              "maxval": 4294967295
+            }
+          },
+          {
+            "name": "capacity",
+            "type": {
+              "type-name": "Uint",
+              "maxval": 18446744073709551615
+            }
+          },
+          {
+            "name": "generalPrice",
+            "type": {
+              "type-name": "Uint",
+              "maxval": 18446744073709551615
+            }
+          },
+          {
+            "name": "premiumPrice",
+            "type": {
+              "type-name": "Uint",
+              "maxval": 18446744073709551615
+            }
+          },
+          {
+            "name": "maxTransfers",
+            "type": {
+              "type-name": "Uint",
+              "maxval": 255
+            }
+          },
+          {
+            "name": "issued",
+            "type": {
+              "type-name": "Uint",
+              "maxval": 18446744073709551615
+            }
+          },
+          {
+            "name": "redeemed",
+            "type": {
+              "type-name": "Uint",
+              "maxval": 18446744073709551615
+            }
+          },
+          {
+            "name": "revenue",
+            "type": {
+              "type-name": "Uint",
+              "maxval": 340282366920938463463374607431768211455
+            }
+          },
+          {
+            "name": "proceedsClaimed",
+            "type": {
+              "type-name": "Uint",
+              "maxval": 340282366920938463463374607431768211455
+            }
+          },
+          {
+            "name": "organizerHash",
+            "type": {
+              "type-name": "Bytes",
+              "length": 32
+            }
+          },
+          {
+            "name": "status",
+            "type": {
+              "type-name": "Enum",
+              "name": "EventStatus",
+              "elements": [
+                "ACTIVE",
+                "PAUSED",
+                "CLOSED"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "tickets",
+      "index": 1,
+      "exported": true,
+      "storage": "Map",
+      "key": {
+        "type-name": "Uint",
+        "maxval": 18446744073709551615
+      },
+      "value": {
+        "type-name": "Struct",
+        "name": "TicketRecord",
+        "elements": [
+          {
+            "name": "eventId",
+            "type": {
+              "type-name": "Uint",
+              "maxval": 18446744073709551615
+            }
+          },
+          {
+            "name": "tier",
+            "type": {
+              "type-name": "Enum",
+              "name": "TicketTier",
+              "elements": [
+                "GENERAL",
+                "PREMIUM"
+              ]
+            }
+          },
+          {
+            "name": "ownerHash",
+            "type": {
+              "type-name": "Bytes",
+              "length": 32
+            }
+          },
+          {
+            "name": "entryCommitment",
+            "type": {
+              "type-name": "Bytes",
+              "length": 32
+            }
+          },
+          {
+            "name": "used",
+            "type": {
+              "type-name": "Boolean"
+            }
+          },
+          {
+            "name": "transfers",
+            "type": {
+              "type-name": "Uint",
+              "maxval": 255
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "nextEventId",
+      "index": 2,
+      "exported": true,
+      "storage": "Counter"
+    },
+    {
+      "name": "nextTicketId",
+      "index": 3,
+      "exported": true,
+      "storage": "Counter"
+    }
+  ]
+}

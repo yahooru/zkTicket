@@ -1,0 +1,79 @@
+- generic [ref=e3]:
+  - link "Skip to main content" [ref=e4] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=e5]:
+    - generic [ref=e6]: zkTicket
+    - generic [ref=e11]: preprod
+  - generic [aria-hidden]:
+    - navigation:
+      - button: Events
+      - button: My tickets
+      - button: Organizer
+      - button: Verifier
+  - main [ref=e13]:
+    - generic [ref=e14]:
+      - generic [ref=e15]:
+        - generic [ref=e16]: Private access on Midnight
+        - heading [level=1] [ref=e20]:
+          - text: Prove you belong.
+          - emphasis [ref=e21]: Keep who you are.
+        - paragraph [ref=e23]: "Programmable event tickets that reveal one fact at the door: access approved. Your identity and date of birth stay yours."
+        - generic [ref=e25]:
+          - generic [ref=e26]: Zero-knowledgeeligibility proofs
+          - generic [ref=e30]: Private ownershipunlinkable to wallet
+      - generic [ref=e34]:
+        - generic [ref=e37]:
+          - generic [ref=e42]:
+            - generic [ref=e43]: Midnight wallet
+            - generic [ref=e44]: Connector 4.x · preprod
+          - generic [ref=e45]: Protocol address
+          - textbox "Protocol address" [ref=e47]:
+            - /placeholder: Paste a deployed contract address
+            - text: c388c841b402dd18db340caf9d5f224b0521ff29b89dc241f2b092b1b099e609
+          - button "Enter protocol" [ref=e48] [cursor=pointer]
+          - generic [ref=e53]: or
+          - button [ref=e55] [cursor=pointer]
+          - paragraph [ref=e59]: Your wallet handles balancing, proving and submission. Secrets never leave this browser.
+        - generic [ref=e62]: Connected transactions settle on Midnight preprod
+    - generic [ref=e64]:
+      - generic [ref=e65]:
+        - generic [ref=e66]: The privacy boundary
+        - heading "The venue learns what it needs. Nothing it doesn’t." [level=2] [ref=e68]: The venue learns what it needs.Nothing it doesn’t.
+      - generic [ref=e69]:
+        - article [ref=e73]:
+          - text: 01 / ENTRY
+          - heading "A proof, not a profile" [level=3] [ref=e76]
+          - paragraph [ref=e77]: Each 60-second QR carries a one-time entry secret. The contract validates its commitment and burns its reuse path on redemption.
+        - article [ref=e91]:
+          - text: 02 / AGE
+          - heading "Over 18. Date hidden." [level=3] [ref=e94]
+          - paragraph [ref=e95]: A private birth date satisfies the event cutoff inside the proof.
+        - article [ref=e99]:
+          - text: 03 / REPLAY
+          - heading "One ticket. One entry." [level=3] [ref=e102]: One ticket.One entry.
+          - paragraph [ref=e103]: Redemption is atomic and on-chain.
+    - generic [ref=e104]:
+      - generic [ref=e105]:
+        - generic [ref=e106]: One quiet flow
+        - heading "From on-chain issue to private admission." [level=2] [ref=e108]: From on-chain issueto private admission.
+      - generic [ref=e109]:
+        - generic [ref=e111]:
+          - generic [ref=e112]: "01"
+          - heading "Discover" [level=3] [ref=e113]
+          - paragraph [ref=e114]: Read event state directly from Midnight.
+        - generic [ref=e116]:
+          - generic [ref=e117]: "02"
+          - heading "Purchase" [level=3] [ref=e118]
+          - paragraph [ref=e119]: Pay NIGHT and receive an owner commitment.
+        - generic [ref=e121]:
+          - generic [ref=e122]: "03"
+          - heading "Prove" [level=3] [ref=e123]
+          - paragraph [ref=e124]: Generate eligibility locally through your wallet.
+        - generic [ref=e126]:
+          - generic [ref=e127]: "04"
+          - heading "Enter" [level=3] [ref=e128]
+          - paragraph [ref=e129]: Scan, verify and redeem exactly once.
+  - contentinfo [ref=e130]:
+    - generic [ref=e131]: zkTicket
+    - paragraph [ref=e136]: The venue learns that you’re allowed inside — not who you are.
+    - generic [ref=e137]: Compact 0.23 · Midnight preprod

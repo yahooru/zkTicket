@@ -1,0 +1,76 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]: zkTicket
+    - generic [ref=e10]: preprod
+  - generic [aria-hidden]:
+    - navigation:
+      - button: Events
+      - button: My tickets
+      - button: Organizer
+      - button: Verifier
+  - main [ref=e12]:
+    - generic [ref=e13]:
+      - generic [ref=e14]:
+        - generic [ref=e15]: Private access on Midnight
+        - heading [level=1] [ref=e19]:
+          - text: Prove you belong.
+          - emphasis [ref=e20]: Keep who you are.
+        - paragraph [ref=e22]: "Programmable event tickets that reveal one fact at the door: access approved. Your identity and date of birth stay yours."
+        - generic [ref=e24]:
+          - generic [ref=e25]: Zero-knowledgeeligibility proofs
+          - generic [ref=e29]: Private ownershipunlinkable to wallet
+      - generic [ref=e33]:
+        - generic [ref=e36]:
+          - generic [ref=e41]:
+            - generic [ref=e42]: Midnight wallet
+            - generic [ref=e43]: Lace · preprod
+          - generic [ref=e44]: Protocol address
+          - textbox "Protocol address" [ref=e46]:
+            - /placeholder: Paste a deployed contract address
+          - button "Enter protocol" [disabled] [ref=e47]
+          - generic [ref=e52]: or
+          - button [ref=e54] [cursor=pointer]
+          - paragraph [ref=e58]: Lace handles balancing, proving and submission. Secrets never leave this browser.
+        - generic [ref=e61]: Connected transactions settle on Midnight preprod
+    - generic [ref=e63]:
+      - generic [ref=e64]:
+        - generic [ref=e65]: The privacy boundary
+        - heading "The venue learns what it needs. Nothing it doesn’t." [level=2] [ref=e67]: The venue learns what it needs.Nothing it doesn’t.
+      - generic [ref=e68]:
+        - article [ref=e72]:
+          - text: 01 / ENTRY
+          - heading "A proof, not a profile" [level=3] [ref=e75]
+          - paragraph [ref=e76]: Each 60-second QR carries a one-time entry secret. The contract validates its commitment and burns its reuse path on redemption.
+        - article [ref=e90]:
+          - text: 02 / AGE
+          - heading "Over 18. Date hidden." [level=3] [ref=e93]
+          - paragraph [ref=e94]: A private birth date satisfies the event cutoff inside the proof.
+        - article [ref=e98]:
+          - text: 03 / REPLAY
+          - heading "One ticket. One entry." [level=3] [ref=e101]: One ticket.One entry.
+          - paragraph [ref=e102]: Redemption is atomic and on-chain.
+    - generic [ref=e103]:
+      - generic [ref=e104]:
+        - generic [ref=e105]: One quiet flow
+        - heading "From on-chain issue to private admission." [level=2] [ref=e107]: From on-chain issueto private admission.
+      - generic [ref=e108]:
+        - generic [ref=e110]:
+          - generic [ref=e111]: "01"
+          - heading "Discover" [level=3] [ref=e112]
+          - paragraph [ref=e113]: Read event state directly from Midnight.
+        - generic [ref=e115]:
+          - generic [ref=e116]: "02"
+          - heading "Purchase" [level=3] [ref=e117]
+          - paragraph [ref=e118]: Pay NIGHT and receive an owner commitment.
+        - generic [ref=e120]:
+          - generic [ref=e121]: "03"
+          - heading "Prove" [level=3] [ref=e122]
+          - paragraph [ref=e123]: Generate eligibility locally through Lace.
+        - generic [ref=e125]:
+          - generic [ref=e126]: "04"
+          - heading "Enter" [level=3] [ref=e127]
+          - paragraph [ref=e128]: Scan, verify and redeem exactly once.
+  - contentinfo [ref=e129]:
+    - generic [ref=e130]: zkTicket
+    - paragraph [ref=e135]: The venue learns that you’re allowed inside — not who you are.
+    - generic [ref=e136]: Compact 0.23 · Midnight preprod

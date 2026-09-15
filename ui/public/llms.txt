@@ -1,0 +1,15 @@
+# zkTicket
+
+zkTicket is a privacy-first event access DApp on Midnight preprod.
+
+The public ledger stores event configuration, capacity, prices, anonymous ownership commitments, transfer counts, redemption state, and aggregate proceeds. The browser supplies private witnesses for the holder secret, date of birth, and one-time entry secret. A verifier learns whether access is valid without receiving the attendee's name, email, wallet history, or exact date of birth.
+
+Core flows: create an event, buy a ticket with NIGHT, prove age eligibility, generate a 60-second entry QR, redeem exactly once, transfer by recipient commitment, operate event status, and claim organizer proceeds.
+
+Network: Midnight preprod
+Contract: 79f31f558aa03e97cf66cab6b4f595e3f31597da7d0dca6faf15c88cf7f6cdee
+Web app: https://zkticket.vercel.app
+
+## Reference
+
+- [Midnight documentation](https://docs.midnight.network/)

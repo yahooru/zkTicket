@@ -1,0 +1,89 @@
+- generic [ref=f4e3]:
+  - link "Skip to main content" [ref=f4e4] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=f4e5]:
+    - button "Go to zkTicket home" [ref=f4e6] [cursor=pointer]:
+      - generic [ref=f4e7]: zkTicket
+    - navigation "Landing page" [ref=f4e12]:
+      - link "Privacy" [ref=f4e13] [cursor=pointer]:
+        - /url: "#privacy"
+      - link "How it works" [ref=f4e14] [cursor=pointer]:
+        - /url: "#how-it-works"
+    - generic [ref=f4e15]:
+      - generic [ref=f4e16]: preprod
+      - button "Connect wallet" [ref=f4e18] [cursor=pointer]
+  - generic [aria-hidden]:
+    - navigation:
+      - button: Privacy
+      - button: How it works
+      - button: Connect wallet
+  - main [ref=f4e21]:
+    - generic [ref=f4e22]:
+      - generic [ref=f4e23]:
+        - generic [ref=f4e24]: Private access on Midnight
+        - heading [level=1] [ref=f4e28]:
+          - text: Prove you belong.
+          - emphasis [ref=f4e29]: Keep who you are.
+        - paragraph [ref=f4e31]: "Programmable event tickets that reveal one fact at the door: access approved. Your identity and date of birth stay yours."
+        - generic [ref=f4e33]:
+          - button "Connect wallet" [ref=f4e34] [cursor=pointer]
+          - link "See how it works" [ref=f4e39] [cursor=pointer]:
+            - /url: "#how-it-works"
+        - generic [ref=f4e43]:
+          - generic [ref=f4e44]: Zero-knowledgeeligibility proofs
+          - generic [ref=f4e48]: Private ownershipunlinkable to wallet
+      - generic [ref=f4e52]:
+        - generic [ref=f4e55]:
+          - generic [ref=f4e56]:
+            - generic [ref=f4e61]: PRIVATEACCESS
+            - generic [ref=f4e63]: ZERO KNOWLEDGE / MIDNIGHT
+          - generic [ref=f4e64]:
+            - generic [ref=f4e65]: ADMIT / 01
+            - generic [ref=f4e67]: IDENTITY / HIDDEN
+          - generic [ref=f4e68]:
+            - generic [ref=f4e69]: Protocol ready
+            - strong [ref=f4e71]: Prove access.Reveal nothing else.
+            - generic [ref=f4e73]: Ticket artwork is chosen by each organizer and stored with the event on-chain.
+        - generic [ref=f4e74]: Transactions settle on Midnight preprod
+    - generic [ref=f4e76]:
+      - generic [ref=f4e77]:
+        - generic [ref=f4e78]: The privacy boundary
+        - heading "The venue learns what it needs. Nothing it doesn’t." [level=2] [ref=f4e80]: The venue learns what it needs.Nothing it doesn’t.
+      - generic [ref=f4e81]:
+        - article [ref=f4e85]:
+          - text: 01 / ENTRY
+          - heading "A proof, not a profile" [level=3] [ref=f4e88]
+          - paragraph [ref=f4e89]: Each 60-second QR carries a one-time entry secret. The contract validates its commitment and burns its reuse path on redemption.
+        - article [ref=f4e103]:
+          - text: 02 / AGE
+          - heading "Over 18. Date hidden." [level=3] [ref=f4e106]
+          - paragraph [ref=f4e107]: A private birth date satisfies the event cutoff inside the proof.
+        - article [ref=f4e111]:
+          - text: 03 / REPLAY
+          - heading "One ticket. One entry." [level=3] [ref=f4e114]: One ticket.One entry.
+          - paragraph [ref=f4e115]: Redemption is atomic and on-chain.
+    - generic [ref=f4e116]:
+      - generic [ref=f4e117]:
+        - generic [ref=f4e118]: One quiet flow
+        - heading "From on-chain issue to private admission." [level=2] [ref=f4e120]: From on-chain issueto private admission.
+      - generic [ref=f4e121]:
+        - generic [ref=f4e123]:
+          - generic [ref=f4e124]: "01"
+          - heading "Discover" [level=3] [ref=f4e125]
+          - paragraph [ref=f4e126]: Read event state directly from Midnight.
+        - generic [ref=f4e128]:
+          - generic [ref=f4e129]: "02"
+          - heading "Purchase" [level=3] [ref=f4e130]
+          - paragraph [ref=f4e131]: Pay NIGHT and receive an owner commitment.
+        - generic [ref=f4e133]:
+          - generic [ref=f4e134]: "03"
+          - heading "Prove" [level=3] [ref=f4e135]
+          - paragraph [ref=f4e136]: Generate eligibility locally through your wallet.
+        - generic [ref=f4e138]:
+          - generic [ref=f4e139]: "04"
+          - heading "Enter" [level=3] [ref=f4e140]
+          - paragraph [ref=f4e141]: Scan, verify and redeem exactly once.
+  - contentinfo [ref=f4e142]:
+    - generic [ref=f4e143]: zkTicket
+    - paragraph [ref=f4e148]: The venue learns that you’re allowed inside — not who you are.
+    - generic [ref=f4e149]: Compact 0.23 · Midnight preprod
