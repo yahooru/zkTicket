@@ -17,7 +17,7 @@
     "build": "npm run build:contract && npm run build:api && npm run build:ui",
     "dev": "npm run prepare:zk && npm run dev --workspace=zkticket-ui",
     "test": "npm run test --workspace=zkticket-contract && npm run test --workspace=zkticket-ui",
-    "typecheck": "npm run typecheck --workspace=@zkticket/api && npm run typecheck --workspace=zkticket-ui"
+    "typecheck": "npm run build:contract && npm run typecheck --workspace=@zkticket/api && npm run typecheck --workspace=zkticket-ui"
   },
   "dependencies": {
     "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
