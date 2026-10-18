@@ -176,7 +176,7 @@ npm run build          # contract, API, and preprod production UI
 npm audit --audit-level=low
 ```
 
-The **25-test** automated release suite covers event persistence (including the HTTPS artwork URL), exact payments, capacity, private age eligibility, invalid secrets, replay rejection, transfer invalidation, transfer caps, organizer authorization, lifecycle enforcement, and unfunded payout refusal. UI tests cover QR scope/expiry/format validation, calendar and NIGHT encoding boundaries, encrypted privacy-key recovery, Connector 4.x discovery, duplicate-wallet handling, and synchronous wallet authorization.
+The automated release suite includes **9 Compact simulator tests** and **16 UI utility tests** (25 total checks). Contract coverage includes event persistence (including the HTTPS artwork URL), exact payments, capacity, private age eligibility, invalid secrets, replay rejection, transfer invalidation, transfer caps, organizer authorization, lifecycle enforcement, and unfunded payout refusal. UI coverage includes QR scope/expiry/format validation, calendar and NIGHT encoding boundaries, encrypted privacy-key recovery, Connector 4.x discovery, duplicate-wallet handling, and synchronous wallet authorization. CI runs typecheck, tests, build, and `npm audit --audit-level=low` on every push and pull request.
 
 Live preprod verification recorded in [`deployments/preprod.json`](deployments/preprod.json) covers deployment and synchronization, event creation, paid purchase, private eligibility, one-time entry preparation and redemption, replay refusal, sales pause/reopen, and settled organizer proceeds claim.
 
@@ -202,6 +202,23 @@ After deployment, verify the landing page without a wallet, then use a Connector
 - The remote proof-service operator processes proving inputs. Use a trusted or local prover according to your threat model.
 - Event titles, venues, dates, tiers, capacity, commitments, and aggregate counts are public by product design.
 - The repository has automated and live functional testing, but no claim of a third-party professional security audit.
+
+## Production readiness
+
+Current automated status:
+
+- `npm run typecheck` passes for API and UI.
+- `npm test` passes: 9 Compact simulator tests and 16 UI utility tests.
+- `npm run build` passes for contract, API, and preprod UI.
+- `npm audit --audit-level=low` passes with zero vulnerabilities.
+- CI is defined in `.github/workflows/ci.yml`.
+
+Before mainnet or real-value use, still required:
+
+- third-party security audit of Compact circuits and browser custody;
+- wallet-backed or encrypted private-state custody instead of browser `localStorage`;
+- reconciliation of `deployments/preprod.json` with live verification evidence;
+- production monitoring and incident response.
 
 ## Product roadmap
 

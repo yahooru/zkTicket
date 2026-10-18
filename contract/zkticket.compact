@@ -113,7 +113,9 @@ export circuit createEvent(
   premiumPrice: Uint<64>,
   maxTransfers: Uint<8>
 ): [] {
+  assert(startsAt > 0, "event start time is required");
   assert(capacity > 0, "capacity must be greater than zero");
+  assert(capacity <= 1000000, "capacity is too large");
   assert(maxTransfers <= 8, "transfer limit is too high");
   assert((minAge == 0 && ageCutoff == 0) || (minAge > 0 && ageCutoff > 0), "invalid age policy");
 

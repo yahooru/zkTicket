@@ -83,13 +83,19 @@ export class BrowserZkTicketManager {
   private async getSecretKey(): Promise<Uint8Array> {
     const storageKey = await this.secretStorageKey();
     const stored = localStorage.getItem(storageKey);
-    if (stored) return Uint8Array.from(atob(stored), (character) => character.charCodeAt(0));
+    if (stored) {
+      const decoded = Uint8Array.from(atob(stored), (character) => character.charCodeAt(0));
+      if (decoded.length !== 32) throw new Error('Stored privacy key is damaged. Restore it from your encrypted backup.');
+      return decoded;
+    }
     const legacyStorageKey = 'zkticket:private-secret:v1';
     const legacy = localStorage.getItem(legacyStorageKey);
     if (legacy) {
+      const decoded = Uint8Array.from(atob(legacy), (character) => character.charCodeAt(0));
+      if (decoded.length !== 32) throw new Error('Stored privacy key is damaged. Restore it from your encrypted backup.');
       localStorage.setItem(storageKey, legacy);
       localStorage.removeItem(legacyStorageKey);
-      return Uint8Array.from(atob(legacy), (character) => character.charCodeAt(0));
+      return decoded;
     }
     const secret = crypto.getRandomValues(new Uint8Array(32));
     localStorage.setItem(storageKey, btoa(String.fromCharCode(...secret)));

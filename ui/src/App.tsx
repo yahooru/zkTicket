@@ -11,7 +11,6 @@ import {
   CurrencyCircleDollar,
   Fingerprint,
   Gauge,
-  House,
   LockKey,
   MapPin,
   Pause,
@@ -21,7 +20,6 @@ import {
   ShieldCheck,
   Sparkle,
   Ticket,
-  Users,
   Wallet,
   WarningCircle,
   X,
@@ -94,7 +92,13 @@ const shortAddress = (value: string, head = 8, tail = 6): string =>
   value.length > head + tail + 3 ? `${value.slice(0, head)}…${value.slice(-tail)}` : value;
 const isContractAddress = (value: string): boolean => /^[\da-f]{64}$/i.test(value.trim());
 
-const copyText = async (value: string): Promise<void> => navigator.clipboard.writeText(value);
+const copyText = async (value: string): Promise<void> => {
+  try {
+    await navigator.clipboard.writeText(value);
+  } catch {
+    window.alert('Copying failed. Your browser may block clipboard access; copy the value manually.');
+  }
+};
 
 function Bezel({ children, className = '' }: { children: ReactNode; className?: string }) {
   return <div className={`bezel ${className}`}><div className="bezel-core">{children}</div></div>;

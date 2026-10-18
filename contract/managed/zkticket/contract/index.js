@@ -362,21 +362,21 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('setEventStatus',
                                      'argument 1 (as invoked from Typescript)',
-                                     'zkticket.compact line 145 char 1',
+                                     'zkticket.compact line 147 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(eventId_0) === 'bigint' && eventId_0 >= 0n && eventId_0 <= 18446744073709551615n)) {
           __compactRuntime.typeError('setEventStatus',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'zkticket.compact line 145 char 1',
+                                     'zkticket.compact line 147 char 1',
                                      'Uint<0..18446744073709551616>',
                                      eventId_0)
         }
         if (!(typeof(status_0) === 'number' && status_0 >= 0 && status_0 <= 2)) {
           __compactRuntime.typeError('setEventStatus',
                                      'argument 2 (argument 3 as invoked from Typescript)',
-                                     'zkticket.compact line 145 char 1',
+                                     'zkticket.compact line 147 char 1',
                                      'Enum<EventStatus, ACTIVE, PAUSED, CLOSED>',
                                      status_0)
         }
@@ -407,21 +407,21 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('buyTicket',
                                      'argument 1 (as invoked from Typescript)',
-                                     'zkticket.compact line 153 char 1',
+                                     'zkticket.compact line 155 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(eventId_0) === 'bigint' && eventId_0 >= 0n && eventId_0 <= 18446744073709551615n)) {
           __compactRuntime.typeError('buyTicket',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'zkticket.compact line 153 char 1',
+                                     'zkticket.compact line 155 char 1',
                                      'Uint<0..18446744073709551616>',
                                      eventId_0)
         }
         if (!(typeof(tier_0) === 'number' && tier_0 >= 0 && tier_0 <= 1)) {
           __compactRuntime.typeError('buyTicket',
                                      'argument 2 (argument 3 as invoked from Typescript)',
-                                     'zkticket.compact line 153 char 1',
+                                     'zkticket.compact line 155 char 1',
                                      'Enum<TicketTier, GENERAL, PREMIUM>',
                                      tier_0)
         }
@@ -451,14 +451,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('proveEligibility',
                                      'argument 1 (as invoked from Typescript)',
-                                     'zkticket.compact line 183 char 1',
+                                     'zkticket.compact line 185 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(ticketId_0) === 'bigint' && ticketId_0 >= 0n && ticketId_0 <= 18446744073709551615n)) {
           __compactRuntime.typeError('proveEligibility',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'zkticket.compact line 183 char 1',
+                                     'zkticket.compact line 185 char 1',
                                      'Uint<0..18446744073709551616>',
                                      ticketId_0)
         }
@@ -487,14 +487,14 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('prepareEntry',
                                      'argument 1 (as invoked from Typescript)',
-                                     'zkticket.compact line 199 char 1',
+                                     'zkticket.compact line 201 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(ticketId_0) === 'bigint' && ticketId_0 >= 0n && ticketId_0 <= 18446744073709551615n)) {
           __compactRuntime.typeError('prepareEntry',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'zkticket.compact line 199 char 1',
+                                     'zkticket.compact line 201 char 1',
                                      'Uint<0..18446744073709551616>',
                                      ticketId_0)
         }
@@ -524,21 +524,21 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('redeemTicket',
                                      'argument 1 (as invoked from Typescript)',
-                                     'zkticket.compact line 219 char 1',
+                                     'zkticket.compact line 221 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(ticketId_0) === 'bigint' && ticketId_0 >= 0n && ticketId_0 <= 18446744073709551615n)) {
           __compactRuntime.typeError('redeemTicket',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'zkticket.compact line 219 char 1',
+                                     'zkticket.compact line 221 char 1',
                                      'Uint<0..18446744073709551616>',
                                      ticketId_0)
         }
         if (!(presentedSecret_0.buffer instanceof ArrayBuffer && presentedSecret_0.BYTES_PER_ELEMENT === 1 && presentedSecret_0.length === 32)) {
           __compactRuntime.typeError('redeemTicket',
                                      'argument 2 (argument 3 as invoked from Typescript)',
-                                     'zkticket.compact line 219 char 1',
+                                     'zkticket.compact line 221 char 1',
                                      'Bytes<32>',
                                      presentedSecret_0)
         }
@@ -569,21 +569,21 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('transferTicket',
                                      'argument 1 (as invoked from Typescript)',
-                                     'zkticket.compact line 236 char 1',
+                                     'zkticket.compact line 238 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(ticketId_0) === 'bigint' && ticketId_0 >= 0n && ticketId_0 <= 18446744073709551615n)) {
           __compactRuntime.typeError('transferTicket',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'zkticket.compact line 236 char 1',
+                                     'zkticket.compact line 238 char 1',
                                      'Uint<0..18446744073709551616>',
                                      ticketId_0)
         }
         if (!(newOwnerHash_0.buffer instanceof ArrayBuffer && newOwnerHash_0.BYTES_PER_ELEMENT === 1 && newOwnerHash_0.length === 32)) {
           __compactRuntime.typeError('transferTicket',
                                      'argument 2 (argument 3 as invoked from Typescript)',
-                                     'zkticket.compact line 236 char 1',
+                                     'zkticket.compact line 238 char 1',
                                      'Bytes<32>',
                                      newOwnerHash_0)
         }
@@ -614,21 +614,21 @@ export class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.currentQueryContext != undefined)) {
           __compactRuntime.typeError('claimEventProceeds',
                                      'argument 1 (as invoked from Typescript)',
-                                     'zkticket.compact line 255 char 1',
+                                     'zkticket.compact line 257 char 1',
                                      'CircuitContext',
                                      contextOrig_0)
         }
         if (!(typeof(eventId_0) === 'bigint' && eventId_0 >= 0n && eventId_0 <= 18446744073709551615n)) {
           __compactRuntime.typeError('claimEventProceeds',
                                      'argument 1 (argument 2 as invoked from Typescript)',
-                                     'zkticket.compact line 255 char 1',
+                                     'zkticket.compact line 257 char 1',
                                      'Uint<0..18446744073709551616>',
                                      eventId_0)
         }
         if (!(typeof(recipient_0) === 'object' && recipient_0.bytes.buffer instanceof ArrayBuffer && recipient_0.bytes.BYTES_PER_ELEMENT === 1 && recipient_0.bytes.length === 32)) {
           __compactRuntime.typeError('claimEventProceeds',
                                      'argument 2 (argument 3 as invoked from Typescript)',
-                                     'zkticket.compact line 255 char 1',
+                                     'zkticket.compact line 257 char 1',
                                      'struct UserAddress<bytes: Bytes<32>>',
                                      recipient_0)
         }
@@ -1061,8 +1061,10 @@ export class Contract {
                  premiumPrice_0,
                  maxTransfers_0)
   {
+    __compactRuntime.assert(startsAt_0 > 0n, 'event start time is required');
     __compactRuntime.assert(capacity_0 > 0n,
                             'capacity must be greater than zero');
+    __compactRuntime.assert(capacity_0 <= 1000000n, 'capacity is too large');
     __compactRuntime.assert(maxTransfers_0 <= 8n, 'transfer limit is too high');
     __compactRuntime.assert(this._equal_1(minAge_0, 0n)
                             &&
@@ -1329,7 +1331,7 @@ export class Contract {
                     issued:
                       ((t1) => {
                         if (t1 > 18446744073709551615n) {
-                          throw new __compactRuntime.CompactError('zkticket.compact line 178 char 13: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
+                          throw new __compactRuntime.CompactError('zkticket.compact line 180 char 13: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
                         }
                         return t1;
                       })(event_0.issued + 1n),
@@ -1337,7 +1339,7 @@ export class Contract {
                     revenue:
                       ((t1) => {
                         if (t1 > 340282366920938463463374607431768211455n) {
-                          throw new __compactRuntime.CompactError('zkticket.compact line 179 char 14: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 340282366920938463463374607431768211455');
+                          throw new __compactRuntime.CompactError('zkticket.compact line 181 char 14: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 340282366920938463463374607431768211455');
                         }
                         return t1;
                       })(event_0.revenue + ticketPrice_0),
@@ -1693,7 +1695,7 @@ export class Contract {
                     redeemed:
                       ((t1) => {
                         if (t1 > 18446744073709551615n) {
-                          throw new __compactRuntime.CompactError('zkticket.compact line 233 char 67: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
+                          throw new __compactRuntime.CompactError('zkticket.compact line 235 char 67: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 18446744073709551615');
                         }
                         return t1;
                       })(event_0.redeemed + 1n),
@@ -1817,7 +1819,7 @@ export class Contract {
                     transfers:
                       ((t1) => {
                         if (t1 > 255n) {
-                          throw new __compactRuntime.CompactError('zkticket.compact line 251 char 16: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 255');
+                          throw new __compactRuntime.CompactError('zkticket.compact line 253 char 16: cast from Field or Uint value to smaller Uint value failed: ' + t1 + ' is greater than 255');
                         }
                         return t1;
                       })(ticket_0.transfers + 1n) };
