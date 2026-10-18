@@ -3,6 +3,7 @@ import {
   ArrowDown,
   ArrowRight,
   ArrowUpRight,
+  ArrowsLeftRight,
   CalendarBlank,
   Camera,
   Check,
@@ -361,7 +362,7 @@ function EventsView({ events, onBuy }: { events: EventView[]; onBuy: (event: Eve
   );
 }
 
-function TicketCard({ ticket, event, birthDate, setBirthDate, api, runTransaction, onProof }: {
+function TicketCard({ ticket, event, birthDate, setBirthDate, api, runTransaction, onProof, wallet }: {
   ticket: TicketView;
   event?: EventView;
   birthDate: string;
@@ -369,6 +370,7 @@ function TicketCard({ ticket, event, birthDate, setBirthDate, api, runTransactio
   api: ZkTicketAPI;
   runTransaction: <T>(label: string, action: () => Promise<T>) => Promise<TransactionSuccess<T> | undefined>;
   onProof: (ticket: TicketView, event: EventView, secret: Uint8Array) => void;
+  wallet?: WalletSummary;
 }) {
   const [recipient, setRecipient] = useState('');
   const proofBirthDate = (): bigint => event?.minAge ? dateToCompact(birthDate) : 0n;
@@ -377,17 +379,22 @@ function TicketCard({ ticket, event, birthDate, setBirthDate, api, runTransactio
     const completed = await runTransaction('Generating private entry proof', () => api.prepareEntry(ticket.id, proofBirthDate()));
     if (completed) onProof(ticket, event, completed.value);
   };
+
+  const refundOpen = !!event?.refundsOpen && !ticket.used && !ticket.refunded && !!wallet;
+
   return (
-    <Bezel className="ticket-bezel"><article className={`ticket-card ${ticket.used ? 'used' : ''}`}>
+    <Bezel className="ticket-bezel"><article className={`ticket-card ${ticket.used ? 'used' : ''} ${ticket.refunded ? 'refunded' : ''}`}>
       <div className="ticket-spine"><span>zk</span><small>{String(ticket.id).padStart(4, '0')}</small></div>
       <div className="ticket-visual">{event?.artworkUrl ? <img src={event.artworkUrl} alt="" referrerPolicy="no-referrer" /> : <div className="ticket-monogram">{event?.name.slice(0, 2).toUpperCase() ?? 'ZK'}</div>}<span>EVENT / {String(ticket.eventId).padStart(2, '0')}</span></div>
       <div className="ticket-main">
-        <div className="ticket-head"><div><span className="ticket-tier">{ticket.tier === TicketTier.PREMIUM ? 'Premium pass' : 'General pass'}</span><h3>{event?.name ?? `Event #${ticket.eventId}`}</h3></div><span className={`ticket-state ${ticket.used ? 'spent' : ''}`}>{ticket.used ? <X weight="light" /> : <Check weight="light" />}{ticket.used ? 'Used' : 'Valid'}</span></div>
+        <div className="ticket-head"><div><span className="ticket-tier">{ticket.tier === TicketTier.PREMIUM ? 'Premium pass' : 'General pass'}</span><h3>{event?.name ?? `Event #${ticket.eventId}`}</h3></div><span className={`ticket-state ${ticket.used ? 'spent' : ''}`}>{ticket.used ? <X weight="light" /> : <Check weight="light" />}{ticket.refunded ? 'Refunded' : ticket.used ? 'Used' : 'Valid'}</span></div>
         <div className="ticket-meta"><span><CalendarBlank weight="light" />{event?.dateLabel ?? 'On-chain event'}</span><span><MapPin weight="light" />{event?.venue ?? 'Venue unavailable'}</span><span><Fingerprint weight="light" />Identity protected</span></div>
-        {!ticket.used && <>
+        {ticket.refunded && <p className="refund-note">This ticket was refunded on-chain and can no longer be used.</p>}
+        {!ticket.used && !ticket.refunded && <>
           {event?.minAge ? <label className="inline-field"><span>Private date of birth</span><div className="input-shell"><input type="date" value={birthDate} onChange={(event) => setBirthDate(event.target.value)} /></div><small>Used only as a local witness for the {event.minAge}+ proof.</small></label> : null}
           <div className="ticket-actions"><PrimaryButton onClick={prepare} disabled={!!event?.minAge && !birthDate} icon={<QrCode weight="light" />}>Generate entry proof</PrimaryButton><SecondaryButton onClick={() => runTransaction('Proving eligibility', () => api.proveEligibility(ticket.id, proofBirthDate()))} disabled={!!event?.minAge && !birthDate} icon={<ShieldCheck weight="light" />}>Test eligibility</SecondaryButton></div>
           <details className="transfer-drawer"><summary>Transfer this ticket <ArrowDown weight="light" /></summary><p>The recipient generates a receiving code for this event. Only its commitment is published.</p><div className="transfer-row"><div className="input-shell"><input value={recipient} onChange={(event) => setRecipient(event.target.value)} placeholder="64-character recipient code" /></div><SecondaryButton disabled={!recipient.trim()} onClick={() => runTransaction('Transferring private ownership', () => api.transferTicket(ticket.id, recipient))}>Transfer</SecondaryButton></div><small>{ticket.transfers} of {event?.maxTransfers ?? '—'} transfers used</small></details>
+          {refundOpen && <details className="refund-drawer"><summary>Claim a refund <ArrowsLeftRight weight="light" /></summary><p>The organizer opened refunds for {event.name}. The unused ticket is burned and {formatNight(ticket.tier === TicketTier.PREMIUM ? event.premiumPrice : event.generalPrice)} NIGHT is sent to your connected wallet address.</p><SecondaryButton onClick={() => runTransaction('Claiming refund', () => api.claimRefund(ticket.id, wallet!.unshieldedAddress))} icon={<Wallet weight="light" />}>Claim refund</SecondaryButton></details>}
         </>}
       </div>
     </article></Bezel>
@@ -428,10 +435,11 @@ function PrivacyVault({ onExport, onImport }: {
   );
 }
 
-function TicketsView({ tickets, events, api, runTransaction, onProof, onExport, onImport }: {
+function TicketsView({ tickets, events, api, wallet, runTransaction, onProof, onExport, onImport }: {
   tickets: TicketView[];
   events: EventView[];
   api: ZkTicketAPI;
+  wallet?: WalletSummary;
   runTransaction: <T>(label: string, action: () => Promise<T>) => Promise<TransactionSuccess<T> | undefined>;
   onProof: (ticket: TicketView, event: EventView, secret: Uint8Array) => void;
   onExport: (passphrase: string) => Promise<string>;
@@ -446,7 +454,7 @@ function TicketsView({ tickets, events, api, runTransaction, onProof, onExport, 
     <section className="workspace-section section-pad">
       <Reveal className="section-heading"><div><Eyebrow>Private wallet</Eyebrow><h2>Your access.<br /><em>Under your control.</em></h2></div><p>Ownership is found locally by matching your secret-derived commitment. Your wallet address is never stored with a ticket.</p></Reveal>
       <div className="ticket-layout">
-        <div className="ticket-list">{owned.length ? owned.map((ticket, index) => <Reveal key={ticket.id} delay={(index % 3) * 60}><TicketCard ticket={ticket} event={events.find((event) => event.id === ticket.eventId)} birthDate={birthDate} setBirthDate={setBirthDate} api={api} runTransaction={runTransaction} onProof={onProof} /></Reveal>) : <EmptyState icon={<Ticket weight="light" />} title="No private tickets found" body="Purchase an active event ticket or receive a transfer using your event-specific code." />}</div>
+        <div className="ticket-list">{owned.length ? owned.map((ticket, index) => <Reveal key={ticket.id} delay={(index % 3) * 60}><TicketCard ticket={ticket} event={events.find((event) => event.id === ticket.eventId)} birthDate={birthDate} setBirthDate={setBirthDate} api={api} wallet={wallet} runTransaction={runTransaction} onProof={onProof} /></Reveal>) : <EmptyState icon={<Ticket weight="light" />} title="No private tickets found" body="Purchase an active event ticket or receive a transfer using your event-specific code." />}</div>
         <Reveal className="receive-column" delay={120}><div className="side-stack"><Bezel><aside className="receive-card"><span className="receive-icon"><Fingerprint weight="light" /></span><Eyebrow>Receive privately</Eyebrow><h3>Share a commitment,<br />not your wallet.</h3><p>Select an event and send this code to the current ticket holder.</p><label className="field-label" htmlFor="receive-event">Event</label><div className="input-shell select-shell"><select id="receive-event" value={receiveEvent} onChange={(event) => setReceiveEvent(Number(event.target.value))}>{events.map((event) => <option key={event.id} value={event.id}>{event.name}</option>)}</select></div>{receivingCode && <div className="code-block"><code>{receivingCode}</code><button onClick={() => copyText(receivingCode)} aria-label="Copy receiving code"><Copy weight="light" /></button></div>}<small>Derived locally for event #{receiveEvent || '—'}</small></aside></Bezel><PrivacyVault onExport={onExport} onImport={onImport} /></div></Reveal>
       </div>
     </section>
@@ -507,7 +515,7 @@ function OrganizerView({ events, api, wallet, runTransaction }: {
       <div className="organizer-grid">
         <Reveal><Bezel><div className="studio-card"><div className="studio-title"><span><Sparkle weight="light" /></span><div><Eyebrow>New experience</Eyebrow><h3>Publish an event</h3></div></div><CreateEventForm onCreate={(input) => runTransaction('Publishing event on Midnight', () => api.createEvent(input))} /></div></Bezel></Reveal>
         <div className="operations-column">
-          {mine.length ? mine.map((event, index) => <Reveal key={event.id} delay={index * 60}><Bezel><article className="operation-card"><div className="operation-head"><div><span>EVENT / {String(event.id).padStart(2, '0')}</span><h3>{event.name}</h3></div><span className={`status-badge status-${eventStatusLabel(event.status).toLowerCase()}`}><i />{eventStatusLabel(event.status)}</span></div><div className="operation-stats"><div><Ticket weight="light" /><span>Issued<strong>{event.issued}</strong></span></div><div><Scan weight="light" /><span>Redeemed<strong>{event.redeemed}</strong></span></div><div><CurrencyCircleDollar weight="light" /><span>Revenue<strong>{formatNight(event.revenue)}</strong></span></div></div><div className="operation-actions"><SecondaryButton onClick={() => runTransaction('Opening event sales', () => api.setEventStatus(event.id, EventStatus.ACTIVE))} disabled={event.status === EventStatus.ACTIVE} icon={<Play weight="light" />}>Open</SecondaryButton><SecondaryButton onClick={() => runTransaction('Pausing event sales', () => api.setEventStatus(event.id, EventStatus.PAUSED))} disabled={event.status === EventStatus.PAUSED} icon={<Pause weight="light" />}>Pause</SecondaryButton><SecondaryButton onClick={() => runTransaction('Closing event', () => api.setEventStatus(event.id, EventStatus.CLOSED))} disabled={event.status === EventStatus.CLOSED} icon={<X weight="light" />}>Close</SecondaryButton></div>{event.revenue > event.proceedsClaimed && <PrimaryButton className="claim-button" onClick={() => runTransaction('Claiming event proceeds', () => api.claimEventProceeds(event.id, wallet.unshieldedAddress))} icon={<ArrowUpRight weight="light" />}>Claim {formatNight(event.revenue - event.proceedsClaimed)} NIGHT</PrimaryButton>}</article></Bezel></Reveal>) : <EmptyState icon={<Gauge weight="light" />} title="No organizer events yet" body="Your secret-derived organizer identity will match every event you create here." />}
+          {mine.length ? mine.map((event, index) => <Reveal key={event.id} delay={index * 60}><Bezel><article className="operation-card"><div className="operation-head"><div><span>EVENT / {String(event.id).padStart(2, '0')}</span><h3>{event.name}</h3></div><span className={`status-badge status-${eventStatusLabel(event.status).toLowerCase()}`}><i />{eventStatusLabel(event.status)}</span></div><div className="operation-stats"><div><Ticket weight="light" /><span>Issued<strong>{event.issued}</strong></span></div><div><Scan weight="light" /><span>Redeemed<strong>{event.redeemed}</strong></span></div><div><CurrencyCircleDollar weight="light" /><span>Refunded<strong>{formatNight(event.refundsPaid)}</strong></span></div></div><div className="operation-actions"><SecondaryButton onClick={() => runTransaction('Opening event sales', () => api.setEventStatus(event.id, EventStatus.ACTIVE))} disabled={event.status === EventStatus.ACTIVE} icon={<Play weight="light" />}>Open</SecondaryButton><SecondaryButton onClick={() => runTransaction('Pausing event sales', () => api.setEventStatus(event.id, EventStatus.PAUSED))} disabled={event.status === EventStatus.PAUSED} icon={<Pause weight="light" />}>Pause</SecondaryButton><SecondaryButton onClick={() => runTransaction('Closing event', () => api.setEventStatus(event.id, EventStatus.CLOSED))} disabled={event.status === EventStatus.CLOSED} icon={<X weight="light" />}>Close</SecondaryButton><SecondaryButton onClick={() => runTransaction(`Switching refunds ${event.refundsOpen ? 'off' : 'on'}`, () => api.setRefundPolicy(event.id, !event.refundsOpen))} icon={<ArrowsLeftRight weight="light" />}>{event.refundsOpen ? 'Close refunds' : 'Open refunds'}</SecondaryButton></div>{event.revenue - event.proceedsClaimed - event.refundsPaid > 0n && <PrimaryButton className="claim-button" onClick={() => runTransaction('Claiming event proceeds', () => api.claimEventProceeds(event.id, wallet.unshieldedAddress))} icon={<ArrowUpRight weight="light" />}>Claim {formatNight(event.revenue - event.proceedsClaimed - event.refundsPaid)} NIGHT</PrimaryButton>}</article></Bezel></Reveal>) : <EmptyState icon={<Gauge weight="light" />} title="No organizer events yet" body="Your secret-derived organizer identity will match every event you create here." />}
         </div>
       </div>
     </section>
@@ -712,7 +720,7 @@ export default function App() {
       {route === 'landing' ? <Landing connected={!!api} onConnect={() => setWalletOpen(true)} onDashboard={() => navigate('dashboard')} /> : !api || !wallet ? <AccessGate onConnect={() => setWalletOpen(true)} /> : <main id="main-content" className="product-main">
         {route === 'dashboard' && <DashboardHome state={state} wallet={wallet} contractAddress={contractAddress} onNavigate={navigate} />}
         {route === 'events' && <EventsView events={state.events} onBuy={onBuy} />}
-        {route === 'tickets' && <TicketsView tickets={state.tickets} events={state.events} api={api} runTransaction={runTransaction} onProof={(ticket, event, secret) => void onProof(ticket, event, secret)} onExport={(passphrase) => requireManager().exportPrivacyKey(passphrase)} onImport={async (backup, passphrase) => { await requireManager().importPrivacyKey(backup, passphrase); window.location.reload(); }} />}
+        {route === 'tickets' && <TicketsView tickets={state.tickets} events={state.events} api={api} wallet={wallet} runTransaction={runTransaction} onProof={(ticket, event, secret) => void onProof(ticket, event, secret)} onExport={(passphrase) => requireManager().exportPrivacyKey(passphrase)} onImport={async (backup, passphrase) => { await requireManager().importPrivacyKey(backup, passphrase); window.location.reload(); }} />}
         {route === 'organizer' && <OrganizerView events={state.events} api={api} wallet={wallet} runTransaction={runTransaction} />}
         {route === 'verifier' && <VerifierView api={api} contractAddress={contractAddress} events={state.events} runTransaction={runTransaction} />}
       </main>}

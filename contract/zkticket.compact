@@ -34,7 +34,10 @@ export struct EventRecord {
   maxTransfers: Uint<8>,
   issued: Uint<64>,
   redeemed: Uint<64>,
+  refunded: Uint<64>,
+  refundsOpen: Boolean,
   revenue: Uint<128>,
+  refundsPaid: Uint<128>,
   proceedsClaimed: Uint<128>,
   organizerHash: Bytes<32>,
   status: EventStatus
@@ -46,6 +49,7 @@ export struct TicketRecord {
   ownerHash: Bytes<32>,
   entryCommitment: Bytes<32>,
   used: Boolean,
+  refunded: Boolean,
   transfers: Uint<8>
 }
 
@@ -137,7 +141,10 @@ export circuit createEvent(
     maxTransfers: disclose(maxTransfers),
     issued: 0,
     redeemed: 0,
+    refunded: 0,
+    refundsOpen: false,
     revenue: 0,
+    refundsPaid: 0,
     proceedsClaimed: 0,
     organizerHash: disclose(organizerHash),
     status: EventStatus.ACTIVE
@@ -150,6 +157,15 @@ export circuit setEventStatus(eventId: Uint<64>, status: EventStatus): [] {
   const event = events.lookup(publicEventId);
   assert(organizerCommitment(localSecretKey()) == event.organizerHash, "organizer authorization failed");
   events.insert(publicEventId, EventRecord { ...event, status: disclose(status) });
+}
+
+export circuit setRefundPolicy(eventId: Uint<64>, refundsOpen: Boolean): [] {
+  const publicEventId = disclose(eventId);
+  assert(events.member(publicEventId), "event not found");
+  const event = events.lookup(publicEventId);
+  assert(event.status != EventStatus.CLOSED, "event is closed");
+  assert(organizerCommitment(localSecretKey()) == event.organizerHash, "organizer authorization failed");
+  events.insert(publicEventId, EventRecord { ...event, refundsOpen: disclose(refundsOpen) });
 }
 
 export circuit buyTicket(eventId: Uint<64>, tier: TicketTier): [] {
@@ -173,6 +189,7 @@ export circuit buyTicket(eventId: Uint<64>, tier: TicketTier): [] {
     ownerHash: disclose(holder),
     entryCommitment: default<Bytes<32>>,
     used: false,
+    refunded: false,
     transfers: 0
   });
   events.insert(publicEventId, EventRecord {
@@ -189,6 +206,7 @@ export circuit proveEligibility(ticketId: Uint<64>): [] {
   assert(events.member(ticket.eventId), "event not found");
   const event = events.lookup(ticket.eventId);
   assert(!ticket.used, "ticket already redeemed");
+  assert(!ticket.refunded, "ticket was refunded");
   assert(ownerCommitment(localSecretKey(), ticket.eventId) == ticket.ownerHash, "ticket ownership proof failed");
 
   const birthDate = localBirthDate();
@@ -206,6 +224,7 @@ export circuit prepareEntry(ticketId: Uint<64>): [] {
   const event = events.lookup(ticket.eventId);
   assert(event.status != EventStatus.CLOSED, "event entry is closed");
   assert(!ticket.used, "ticket already redeemed");
+  assert(!ticket.refunded, "ticket was refunded");
   assert(ownerCommitment(localSecretKey(), ticket.eventId) == ticket.ownerHash, "ticket ownership proof failed");
 
   const birthDate = localBirthDate();
@@ -226,6 +245,7 @@ export circuit redeemTicket(ticketId: Uint<64>, presentedSecret: Bytes<32>): [] 
   const event = events.lookup(ticket.eventId);
   assert(event.status != EventStatus.CLOSED, "event entry is closed");
   assert(!ticket.used, "ticket already redeemed");
+  assert(!ticket.refunded, "ticket was refunded");
   assert(
     entryCommitment(presentedSecret, ticketId) == ticket.entryCommitment,
     "entry proof is invalid"
@@ -242,6 +262,7 @@ export circuit transferTicket(ticketId: Uint<64>, newOwnerHash: Bytes<32>): [] {
   assert(events.member(ticket.eventId), "event not found");
   const event = events.lookup(ticket.eventId);
   assert(!ticket.used, "redeemed tickets cannot be transferred");
+  assert(!ticket.refunded, "refunded tickets cannot be transferred");
   assert(ticket.transfers < event.maxTransfers, "transfer limit reached");
   assert(ownerCommitment(localSecretKey(), ticket.eventId) == ticket.ownerHash, "ticket ownership proof failed");
   assert(disclose(newOwnerHash) != ticket.ownerHash, "new owner must be different");
@@ -260,8 +281,8 @@ export circuit claimEventProceeds(eventId: Uint<64>, recipient: UserAddress): []
   const event = events.lookup(publicEventId);
   assert(organizerCommitment(localSecretKey()) == event.organizerHash, "organizer authorization failed");
 
-  assert(event.revenue > event.proceedsClaimed, "no proceeds to claim");
-  const claimable = event.revenue - event.proceedsClaimed;
+  const claimable = event.revenue - event.proceedsClaimed - event.refundsPaid;
+  assert(claimable > 0, "no proceeds to claim");
   assert(unshieldedBalanceGte(nativeToken(), claimable), "contract balance is insufficient");
 
   sendUnshielded(
@@ -269,5 +290,34 @@ export circuit claimEventProceeds(eventId: Uint<64>, recipient: UserAddress): []
     claimable,
     right<ContractAddress, UserAddress>(disclose(recipient))
   );
-  events.insert(publicEventId, EventRecord { ...event, proceedsClaimed: event.revenue });
+  events.insert(publicEventId, EventRecord { ...event, proceedsClaimed: (event.proceedsClaimed + claimable) as Uint<128> });
+}
+
+export circuit claimRefund(ticketId: Uint<64>, recipient: UserAddress): [] {
+  const publicTicketId = disclose(ticketId);
+  assert(tickets.member(publicTicketId), "ticket not found");
+  const ticket = tickets.lookup(publicTicketId);
+  assert(events.member(ticket.eventId), "event not found");
+  const event = events.lookup(ticket.eventId);
+  assert(event.status != EventStatus.CLOSED, "event is closed");
+  assert(event.refundsOpen, "event refunds are not open");
+  assert(!ticket.used, "ticket already redeemed");
+  assert(!ticket.refunded, "ticket already refunded");
+  assert(ownerCommitment(localSecretKey(), ticket.eventId) == ticket.ownerHash, "ticket ownership proof failed");
+
+  const ticketPrice = priceForTier(event, ticket.tier) as Uint<128>;
+  assert(event.revenue >= event.proceedsClaimed + event.refundsPaid + ticketPrice, "refund budget is exhausted");
+  assert(unshieldedBalanceGte(nativeToken(), ticketPrice), "contract balance is insufficient");
+
+  sendUnshielded(
+    nativeToken(),
+    ticketPrice,
+    right<ContractAddress, UserAddress>(disclose(recipient))
+  );
+  tickets.insert(publicTicketId, TicketRecord { ...ticket, refunded: true, entryCommitment: default<Bytes<32>> });
+  events.insert(ticket.eventId, EventRecord {
+    ...event,
+    refunded: (event.refunded + 1) as Uint<64>,
+    refundsPaid: (event.refundsPaid + ticketPrice) as Uint<128>
+  });
 }

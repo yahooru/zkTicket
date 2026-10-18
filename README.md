@@ -10,7 +10,7 @@ zkTicket is a privacy-first event access protocol built with Compact and Midnigh
 
 Conventional ticketing systems collect a profile when the door usually needs one answer: is this ticket valid for this event? zkTicket separates the minimum public state needed to operate an event from the private data needed to prove eligibility and ownership.
 
-- Organizers get programmable capacity, pricing, lifecycle controls, redemption totals, and proceeds.
+- Organizers get programmable capacity, pricing, lifecycle controls, refunds, redemption totals, and proceeds.
 - Attendees keep ticket control behind a secret-derived commitment instead of a public wallet identifier.
 - Door staff receive an on-chain admission decision without receiving an identity profile.
 
@@ -52,8 +52,9 @@ The UI ships with the contract address above as its preprod default.
 
 1. Publish an event with an HTTPS artwork URL, venue, start time, age policy, capacity, tier prices, and transfer cap. The artwork URL is stored in the public event ledger and rendered on event and ticket views.
 2. Pause or reopen ticket sales and close event entry.
-3. Read issued, redeemed, revenue, and claimed-proceeds values from ledger state.
-4. Claim settled NIGHT proceeds to the connected wallet's checksummed preprod address.
+3. Read issued, redeemed, refunded, revenue, and claimed-proceeds values from ledger state.
+4. Toggle refunds open per event and refund unused tickets; refunded tickets can no longer be used or transferred.
+5. Claim settled NIGHT proceeds to the connected wallet's checksummed preprod address.
 
 ### Private transfer
 
@@ -119,12 +120,14 @@ The marketing shell, QR encoder, and camera scanner are code-split. Midnight run
 | --- | --- | --- |
 | `createEvent` | Publish event configuration | Capacity > 0, transfer cap ≤ 8, coherent age policy |
 | `setEventStatus` | Open, pause, or close an event | Event exists, organizer commitment matches |
+| `setRefundPolicy` | Turn refunds on or off | Event exists, organizer commitment matches, event not closed |
 | `buyTicket` | Receive NIGHT and create a private owner commitment | Event active, capacity available, exact tier price |
-| `proveEligibility` | Prove ownership and optional age policy | Ticket unused, ownership match, DOB ≤ cutoff |
-| `prepareEntry` | Commit a new one-time entry secret | Event not closed, ticket unused, ownership and age valid |
-| `redeemTicket` | Admit once and burn replay path | Correct secret commitment, ticket unused, entry open |
-| `transferTicket` | Replace the owner commitment | Ticket unused, owner valid, recipient differs, cap available |
+| `proveEligibility` | Prove ownership and optional age policy | Ticket unused, ownership match, DOB = cutoff |
+| `prepareEntry` | Commit a new one-time entry secret | Event not closed, ticket unused and not refunded, ownership and age valid |
+| `redeemTicket` | Admit once and burn replay path | Correct secret commitment, ticket unused and not refunded, entry open |
+| `transferTicket` | Replace the owner commitment | Ticket unused and not refunded, owner valid, recipient differs, cap available |
 | `claimEventProceeds` | Pay unclaimed NIGHT to a user address | Organizer valid, claim available, contract funded |
+| `claimRefund` | Return an unused ticket price to its holder | Refunds open, organizer funds available, ownership valid |
 
 Commitment domains are separated (`organizer`, `owner`, and `entry`) and include the relevant event or ticket identifier where needed.
 
@@ -176,7 +179,7 @@ npm run build          # contract, API, and preprod production UI
 npm audit --audit-level=low
 ```
 
-The automated release suite includes **9 Compact simulator tests** and **16 UI utility tests** (25 total checks). Contract coverage includes event persistence (including the HTTPS artwork URL), exact payments, capacity, private age eligibility, invalid secrets, replay rejection, transfer invalidation, transfer caps, organizer authorization, lifecycle enforcement, and unfunded payout refusal. UI coverage includes QR scope/expiry/format validation, calendar and NIGHT encoding boundaries, encrypted privacy-key recovery, Connector 4.x discovery, duplicate-wallet handling, and synchronous wallet authorization. CI runs typecheck, tests, build, and `npm audit --audit-level=low` on every push and pull request.
+The automated release suite includes **10 Compact simulator tests** and **16 UI utility tests** (26 total checks). Contract coverage includes event persistence (including the HTTPS artwork URL), exact payments, capacity, private age eligibility, invalid secrets, replay rejection, transfer invalidation, transfer caps, organizer authorization, lifecycle enforcement, unfunded payout refusal, refund policy control, and refund refusal before funding. UI coverage includes QR scope/expiry/format validation, calendar and NIGHT encoding boundaries, encrypted privacy-key recovery, Connector 4.x discovery, duplicate-wallet handling, and synchronous wallet authorization. CI runs typecheck, tests, build, and `npm audit --audit-level=low` on every push and pull request.
 
 Live preprod verification recorded in [`deployments/preprod.json`](deployments/preprod.json) covers deployment and synchronization, event creation, paid purchase, private eligibility, one-time entry preparation and redemption, replay refusal, sales pause/reopen, and settled organizer proceeds claim.
 
@@ -208,7 +211,7 @@ After deployment, verify the landing page without a wallet, then use a Connector
 Current automated status:
 
 - `npm run typecheck` passes for API and UI.
-- `npm test` passes: 9 Compact simulator tests and 16 UI utility tests.
+- `npm test` passes: 10 Compact simulator tests and 16 UI utility tests.
 - `npm run build` passes for contract, API, and preprod UI.
 - `npm audit --audit-level=low` passes with zero vulnerabilities.
 - CI is defined in `.github/workflows/ci.yml`.
@@ -222,4 +225,4 @@ Before mainnet or real-value use, still required:
 
 ## Product roadmap
 
-High-value next steps after this preprod release are wallet-backed encrypted private-state custody, seat/section commitments, organizer-configurable refund circuits, privacy-preserving allowlists, and separated verifier roles for multi-venue deployments. These are intentionally not mocked in the current UI: connected screens display only capabilities backed by the deployed contract.
+High-value next steps after this preprod release are wallet-backed encrypted private-state custody, seat/section commitments, privacy-preserving allowlists, and separated verifier roles for multi-venue deployments. These are intentionally not mocked in the current UI: connected screens display only capabilities backed by the deployed contract.

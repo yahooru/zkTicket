@@ -25,6 +25,12 @@ import {
 } from './common-types.js';
 import { bytesToHex, decodeText, encodeArtworkUrl, encodeText, hexToBytes, isZeroBytes } from './encoding.js';
 
+const decodeUnshieldedUserAddress = (value: string): string => {
+  const encodedAddress = MidnightBech32m.parse(value);
+  const networkId = encodedAddress.network === mainnet ? 'mainnet' : encodedAddress.network;
+  return encodedAddress.decode(UnshieldedAddress, networkId).hexString;
+};
+
 export class ZkTicketAPI {
   readonly deployedContractAddress: ContractAddress;
   readonly state$: Observable<ZkTicketDerivedState>;
@@ -58,7 +64,10 @@ export class ZkTicketAPI {
             maxTransfers: Number(event.maxTransfers),
             issued: Number(event.issued),
             redeemed: Number(event.redeemed),
+            refunded: Number(event.refunded),
+            refundsOpen: event.refundsOpen,
             revenue: event.revenue,
+            refundsPaid: event.refundsPaid,
             proceedsClaimed: event.proceedsClaimed,
             organizerHash: bytesToHex(event.organizerHash),
             status: event.status,
@@ -70,6 +79,7 @@ export class ZkTicketAPI {
             ownerHash: bytesToHex(ticket.ownerHash),
             entryReady: !isZeroBytes(ticket.entryCommitment),
             used: ticket.used,
+            refunded: ticket.refunded,
             transfers: Number(ticket.transfers),
           })).sort((a, b) => b.id - a.id),
         })),
@@ -117,6 +127,10 @@ export class ZkTicketAPI {
     await (this.deployedContract as any).callTx.buyTicket(BigInt(eventId), tier);
   }
 
+  async setRefundPolicy(eventId: number, refundsOpen: boolean): Promise<void> {
+    await (this.deployedContract as any).callTx.setRefundPolicy(BigInt(eventId), refundsOpen);
+  }
+
   async proveEligibility(ticketId: number, birthDate: bigint): Promise<void> {
     await this.updatePrivateState({ birthDate });
     await (this.deployedContract as any).callTx.proveEligibility(BigInt(ticketId));
@@ -138,12 +152,19 @@ export class ZkTicketAPI {
   }
 
   async claimEventProceeds(eventId: number, recipientAddress: string): Promise<void> {
-    const encodedAddress = MidnightBech32m.parse(recipientAddress);
-    const networkId = encodedAddress.network === mainnet ? 'mainnet' : encodedAddress.network;
-    const userAddress = encodedAddress.decode(UnshieldedAddress, networkId).hexString;
+    const userAddress = decodeUnshieldedUserAddress(recipientAddress);
 
     await (this.deployedContract as any).callTx.claimEventProceeds(
       BigInt(eventId),
+      { bytes: encodeUserAddress(userAddress) },
+    );
+  }
+
+  async claimRefund(ticketId: number, recipientAddress: string): Promise<void> {
+    const userAddress = decodeUnshieldedUserAddress(recipientAddress);
+
+    await (this.deployedContract as any).callTx.claimRefund(
+      BigInt(ticketId),
       { bytes: encodeUserAddress(userAddress) },
     );
   }

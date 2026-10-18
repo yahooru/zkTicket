@@ -190,4 +190,21 @@ describe('zkTicket compiled Compact contract', () => {
     expect(() => call('claimEventProceeds', 1n, { bytes: bytes(4) })).toThrow('contract balance is insufficient');
     expect(ledger(context.currentQueryContext.state).events.lookup(1n).proceedsClaimed).toBe(0n);
   });
+
+  it('requires organizer authorization to configure refunds and blocks closed ones', () => {
+    call('buyTicket', 1n, TicketTier.PREMIUM);
+    call('setRefundPolicy', 1n, false);
+
+    expect(() => call('claimRefund', 1n, { bytes: bytes(4) })).toThrow('refunds are not open');
+    usePrivateState(bytes(9));
+    expect(() => call('setRefundPolicy', 1n, true)).toThrow('organizer authorization failed');
+    usePrivateState(organizerSecret);
+    call('setRefundPolicy', 1n, true);
+
+    const state = ledger(context.currentQueryContext.state);
+    expect(state.events.lookup(1n).refundsOpen).toBe(true);
+    // Pure runtime cannot settle the received ticket payment into a balance.
+    expect(() => call('claimRefund', 1n, { bytes: bytes(4) })).toThrow('contract balance is insufficient');
+    expect(state.tickets.lookup(1n).refunded).toBe(false);
+  });
 });

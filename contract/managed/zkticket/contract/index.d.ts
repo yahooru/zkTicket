@@ -17,7 +17,10 @@ export type EventRecord = { name: Uint8Array;
                             maxTransfers: bigint;
                             issued: bigint;
                             redeemed: bigint;
+                            refunded: bigint;
+                            refundsOpen: boolean;
                             revenue: bigint;
+                            refundsPaid: bigint;
                             proceedsClaimed: bigint;
                             organizerHash: Uint8Array;
                             status: EventStatus
@@ -28,6 +31,7 @@ export type TicketRecord = { eventId: bigint;
                              ownerHash: Uint8Array;
                              entryCommitment: Uint8Array;
                              used: boolean;
+                             refunded: boolean;
                              transfers: bigint
                            };
 
@@ -53,6 +57,9 @@ export type ImpureCircuits<PS> = {
   setEventStatus(context: __compactRuntime.CircuitContext<PS>,
                  eventId_0: bigint,
                  status_0: EventStatus): __compactRuntime.CircuitResults<PS, []>;
+  setRefundPolicy(context: __compactRuntime.CircuitContext<PS>,
+                  eventId_0: bigint,
+                  refundsOpen_0: boolean): __compactRuntime.CircuitResults<PS, []>;
   buyTicket(context: __compactRuntime.CircuitContext<PS>,
             eventId_0: bigint,
             tier_0: TicketTier): __compactRuntime.CircuitResults<PS, []>;
@@ -68,6 +75,9 @@ export type ImpureCircuits<PS> = {
   claimEventProceeds(context: __compactRuntime.CircuitContext<PS>,
                      eventId_0: bigint,
                      recipient_0: { bytes: Uint8Array }): __compactRuntime.CircuitResults<PS, []>;
+  claimRefund(context: __compactRuntime.CircuitContext<PS>,
+              ticketId_0: bigint,
+              recipient_0: { bytes: Uint8Array }): __compactRuntime.CircuitResults<PS, []>;
 }
 
 export type ProvableCircuits<PS> = {
@@ -86,6 +96,9 @@ export type ProvableCircuits<PS> = {
   setEventStatus(context: __compactRuntime.CircuitContext<PS>,
                  eventId_0: bigint,
                  status_0: EventStatus): __compactRuntime.CircuitResults<PS, []>;
+  setRefundPolicy(context: __compactRuntime.CircuitContext<PS>,
+                  eventId_0: bigint,
+                  refundsOpen_0: boolean): __compactRuntime.CircuitResults<PS, []>;
   buyTicket(context: __compactRuntime.CircuitContext<PS>,
             eventId_0: bigint,
             tier_0: TicketTier): __compactRuntime.CircuitResults<PS, []>;
@@ -101,6 +114,9 @@ export type ProvableCircuits<PS> = {
   claimEventProceeds(context: __compactRuntime.CircuitContext<PS>,
                      eventId_0: bigint,
                      recipient_0: { bytes: Uint8Array }): __compactRuntime.CircuitResults<PS, []>;
+  claimRefund(context: __compactRuntime.CircuitContext<PS>,
+              ticketId_0: bigint,
+              recipient_0: { bytes: Uint8Array }): __compactRuntime.CircuitResults<PS, []>;
 }
 
 export type PureCircuits = {
@@ -137,6 +153,9 @@ export type Circuits<PS> = {
   setEventStatus(context: __compactRuntime.CircuitContext<PS>,
                  eventId_0: bigint,
                  status_0: EventStatus): __compactRuntime.CircuitResults<PS, []>;
+  setRefundPolicy(context: __compactRuntime.CircuitContext<PS>,
+                  eventId_0: bigint,
+                  refundsOpen_0: boolean): __compactRuntime.CircuitResults<PS, []>;
   buyTicket(context: __compactRuntime.CircuitContext<PS>,
             eventId_0: bigint,
             tier_0: TicketTier): __compactRuntime.CircuitResults<PS, []>;
@@ -152,6 +171,9 @@ export type Circuits<PS> = {
   claimEventProceeds(context: __compactRuntime.CircuitContext<PS>,
                      eventId_0: bigint,
                      recipient_0: { bytes: Uint8Array }): __compactRuntime.CircuitResults<PS, []>;
+  claimRefund(context: __compactRuntime.CircuitContext<PS>,
+              ticketId_0: bigint,
+              recipient_0: { bytes: Uint8Array }): __compactRuntime.CircuitResults<PS, []>;
 }
 
 export type Ledger = {

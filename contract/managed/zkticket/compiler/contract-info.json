@@ -174,7 +174,27 @@
                 }
               },
               {
+                "name": "refunded",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 18446744073709551615
+                }
+              },
+              {
+                "name": "refundsOpen",
+                "type": {
+                  "type-name": "Boolean"
+                }
+              },
+              {
                 "name": "revenue",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 340282366920938463463374607431768211455
+                }
+              },
+              {
+                "name": "refundsPaid",
                 "type": {
                   "type-name": "Uint",
                   "maxval": 340282366920938463463374607431768211455
@@ -347,6 +367,31 @@
       }
     },
     {
+      "name": "setRefundPolicy",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+        {
+          "name": "eventId",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 18446744073709551615
+          }
+        },
+        {
+          "name": "refundsOpen",
+          "type": {
+            "type-name": "Boolean"
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
       "name": "buyTicket",
       "pure": false,
       "proof": true,
@@ -473,6 +518,41 @@
       "arguments": [
         {
           "name": "eventId",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 18446744073709551615
+          }
+        },
+        {
+          "name": "recipient",
+          "type": {
+            "type-name": "Struct",
+            "name": "UserAddress",
+            "elements": [
+              {
+                "name": "bytes",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "claimRefund",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+        {
+          "name": "ticketId",
           "type": {
             "type-name": "Uint",
             "maxval": 18446744073709551615
@@ -639,7 +719,27 @@
             }
           },
           {
+            "name": "refunded",
+            "type": {
+              "type-name": "Uint",
+              "maxval": 18446744073709551615
+            }
+          },
+          {
+            "name": "refundsOpen",
+            "type": {
+              "type-name": "Boolean"
+            }
+          },
+          {
             "name": "revenue",
+            "type": {
+              "type-name": "Uint",
+              "maxval": 340282366920938463463374607431768211455
+            }
+          },
+          {
+            "name": "refundsPaid",
             "type": {
               "type-name": "Uint",
               "maxval": 340282366920938463463374607431768211455
@@ -721,6 +821,12 @@
           },
           {
             "name": "used",
+            "type": {
+              "type-name": "Boolean"
+            }
+          },
+          {
+            "name": "refunded",
             "type": {
               "type-name": "Boolean"
             }

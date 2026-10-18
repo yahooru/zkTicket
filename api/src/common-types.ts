@@ -9,12 +9,14 @@ export type PrivateStateId = typeof zkTicketPrivateStateKey;
 export type ZkTicketCircuitKeys =
   | 'createEvent'
   | 'setEventStatus'
+  | 'setRefundPolicy'
   | 'buyTicket'
   | 'proveEligibility'
   | 'prepareEntry'
   | 'redeemTicket'
   | 'transferTicket'
-  | 'claimEventProceeds';
+  | 'claimEventProceeds'
+  | 'claimRefund';
 
 export type ZkTicketProviders = MidnightProviders<ZkTicketCircuitKeys, PrivateStateId, ZkTicketPrivateState>;
 export type DeployedZkTicketContract = FoundContract<any>;
@@ -34,7 +36,10 @@ export interface EventView {
   readonly maxTransfers: number;
   readonly issued: number;
   readonly redeemed: number;
+  readonly refunded: number;
+  readonly refundsOpen: boolean;
   readonly revenue: bigint;
+  readonly refundsPaid: bigint;
   readonly proceedsClaimed: bigint;
   readonly organizerHash: string;
   readonly status: EventStatus;
@@ -47,6 +52,7 @@ export interface TicketView {
   readonly ownerHash: string;
   readonly entryReady: boolean;
   readonly used: boolean;
+  readonly refunded: boolean;
   readonly transfers: number;
 }
 
